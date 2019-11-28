@@ -93,6 +93,7 @@ plot1 <- leaflet(nonZero) %>% addProviderTiles(providers$CartoDB.Positron) %>%
                      opacity = 0.1, 
                      fillColor = someCols[colIndex], 
                      popup = ~artists) %>% 
+         addMarkers(labelOptions = labelOptions(noHide = T, textsize = "15px") %>%
          addLegend(position = "topright", 
                    colors = someCols, 
                    labels = unique(nonZero$music))
