@@ -9,27 +9,34 @@ library(raster)
 library(leaflet)
 
 #-------------------------------------------------------------------------------
-devtools::source_url("https://github.com/Michael-Stevens-27/musicmapR/blob/master/SpotifyFunctions.R")
+devtools::install_github("michael-stevens-27/musicmapR")
+library(musicmapR)
 
 #-------------------------------------------------------------------------------
 # read file and process
-data  <- initProcess("/home/mstevens/Desktop/Job\ Stuff/BLOG/001-MichaelStevens/StreamingHistory.json")
+data  <- initProcess("/home/mstevens/Desktop/musicmapR/data/StreamingHistory.json")
 
 # concatonate the artists to gather an idea of play count per artist  
 namesTable <- table(data$artistName) 
 
 # plot as a barplot
-bins <- 15
-png(file = "top15.png", width = 2000, height = 1000, pointsize = 20)
-barplot(head(rev(namesTable[order(namesTable)]), bins), xlab = NULL, 
-        ylab = "plays (3 months)", col = plasma(bins), width = 0.8, las = 2,
-        cex.names = 0.5)
+bins <- 10
+artistData <- head(rev(namesTable[order(namesTable)]), bins)
+names(artistData) <- gsub(" ", "\n", names(artistData), fixed = TRUE)
+
+png(file = "top10.png", width = 1000, height = 1000, pointsize = 20)
+barplot(artistData, xlab = "plays (past 3 months)", 
+        col = plasma(bins), width = 0.8, las = 2,
+        cex.names = 0.8, horiz = T, main = "Top 10 listened to artists")
 dev.off()
 
 # plot time series in polar co ord form 
 
-timeSeriesPlot <- plotTimeSeries(data)
-ggsave(file = "joeTimeSeries.png", plot = timeSeriesPlot, units = "cm", height = 7, width = 7, dpi = 600)
+png(file = "timings.png", width = 600, height = 600, pointsize = 10)
+plotTimeSeries(data) 
+dev.off()
+
+ggsave(file = "TimeSeries.png", plot = timeSeriesPlot, units = "cm", height = 7, width = 7, dpi = 600) 
 
 attach(data)
 #-------------------------------------------------------------------------------
@@ -46,8 +53,8 @@ uniqueArtists <- unique(artistName)
 # save(joeMessy, file = "messylastFM.Rdata")
 
 # call in a shapefile with countries listed
-countriesShape <- readOGR("/home/mstevens/Desktop/Job\ Stuff/BLOG/001-MichaelStevens/countriesSHP")
-load("/home/mstevens/Desktop/Job\ Stuff/BLOG/001-MichaelStevens/lastfmNames.Rdata")
+countriesShape <- rgdal::readOGR("inst/countriesSHP")
+load("inst/lastfmNames.Rdata")
 
 # use some basic regular expression function to check if each entry is in the 
 # list of countries

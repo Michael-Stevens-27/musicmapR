@@ -42,6 +42,7 @@ initProcess <- function(fileName)
 #' @param type specify on wat times scale, currently only hours
 #'
 #' @export
+
 plotTimeSeries <- function(data, type = "hours")
 {
   # create strings
@@ -59,7 +60,10 @@ plotTimeSeries <- function(data, type = "hours")
     
     # plot
     hourDF <- data.frame(time = sprintf("%02d",0:23), counts = hourCount)
-    p = ggplot(hourDF, aes(x = time, y = counts, fill = counts)) + geom_bar(stat= "identity") + coord_polar()
+    p = ggplot(hourDF, aes(x = time, y = counts, fill = counts)) + 
+    geom_bar(stat= "identity") + 
+    coord_polar() +  
+    theme(plot.title = element_text(hjust = 0.5)) + labs(title = "Top listening times", ylab = NULL)
     show(p)
   } else if(type == "days")
   {
