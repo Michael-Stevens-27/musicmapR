@@ -1,0 +1,11 @@
+Package: musicmapR
+Type: Package
+Title: What the package does (short line)
+Version: 1.0
+Date: 2019-11-28
+Authors@R: as.person(
+    "Michael Stevens <mikestevens1@hotmail.co.uk> [aut, cre]")
+Maintainer: Who to complain to <yourfault@somewhere.net>
+Description: More about what it does (maybe more than one line)
+License: What license is it under?
+RoxygenNote: 6.1.1
