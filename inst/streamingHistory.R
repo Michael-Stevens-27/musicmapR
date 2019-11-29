@@ -9,7 +9,7 @@ library(raster)
 library(leaflet)
 
 #-------------------------------------------------------------------------------
-devtools::install_github("michael-stevens-27/musicmapR")
+# devtools::install_github("michael-stevens-27/musicmapR")
 library(musicmapR)
 
 #-------------------------------------------------------------------------------
@@ -31,7 +31,6 @@ barplot(artistData, xlab = "plays (past 3 months)",
 dev.off()
 
 # plot time series in polar co ord form 
-
 png(file = "timings.png", width = 600, height = 600, pointsize = 10)
 plotTimeSeries(data) 
 dev.off()
@@ -93,8 +92,8 @@ plot1 <- leaflet(nonZero) %>% addProviderTiles(providers$CartoDB.Positron) %>%
                      opacity = 0.1, 
                      fillColor = someCols[colIndex], 
                      popup = ~artists) %>% 
-         addMarkers(labelOptions = labelOptions(noHide = T, textsize = "15px") %>%
          addLegend(position = "topright", 
                    colors = someCols, 
-                   labels = unique(nonZero$music))
+                   labels = unique(nonZero$music),
+                   title = "Number of\nartists")
 plot1
