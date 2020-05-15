@@ -61,10 +61,11 @@ plotTimeSeries <- function(data, type = "hours")
     # plot
     hourDF <- data.frame(time = sprintf("%02d",0:23), counts = hourCount)
     p = ggplot(hourDF, aes(x = time, y = counts, fill = counts)) + 
-    geom_bar(stat= "identity") + 
-    coord_polar() +  
-    theme(plot.title = element_text(hjust = 0.5)) + labs(title = "Top listening times", ylab = NULL)
-    show(p)
+        geom_bar(stat= "identity") + 
+        coord_polar() +  
+        theme(legend.position = "NULL", plot.title = element_text(hjust = 0.5)) + 
+        labs(title = "Top listening times", ylab = NULL)
+        show(p)
   } else if(type == "days")
   {
     # TODO # do the same for days instead
@@ -88,16 +89,18 @@ plotTimeSeries <- function(data, type = "hours")
 
 scrapeLocations <- function(artistNames)
 {
+  # replace spaces with plus signs to conform to Last FM format
+  artistNames <- sub("\n", "+", artistNames)
   # time process  
   begin <- Sys.time()
   nArtists <- length(artistNames)
   lastfmURLS <- rep(NA, nArtists)
   lastfmLoc <- matrix(NA, ncol = 2, nrow = nArtists)
   
+  
   # build a set of urls to scrape from 
-  for(i in 1:nArtists)
-    {
-    lastfmURLS[i] <- paste("https://www.last.fm/music/", artistNames[i], "/+wiki", sep = "")
+  for(i in 1:nArtists){
+    lastfmURLS[i] <- paste("https://www.last.fm/music/", artistNames[i], sep = "")
     }
   
   # -----------------------------------
@@ -115,7 +118,7 @@ scrapeLocations <- function(artistNames)
     setTxtProgressBar(pb, i)
   
     readingSite <- read_html(lastfmURLS[i])               # read the html from site 
-    origin <- html_nodes(readingSite, ".factbox-item p")  # extract specific info
+    origin <- html_nodes(readingSite, "dd~ dd")  # extract specific info
 
     # remove any nasty characters from the string
     lastfmLoc[i, 1:length(origin)] <- str_replace_all(as.character(origin[1:length(origin)]), "[,.\"_<=/>]", "")

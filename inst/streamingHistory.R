@@ -14,34 +14,32 @@ library(musicmapR)
 
 #-------------------------------------------------------------------------------
 # read file and process
-data  <- initProcess("/home/mstevens/Desktop/musicmapR/data/StreamingHistory.json")
+data  <- initProcess("/home/mstevens/Desktop/musicmapR/data/MyData/StreamingHistory3.json")
 
 # concatonate the artists to gather an idea of play count per artist  
 namesTable <- table(data$artistName) 
 
+length(unique(data$artistName))
+
 # plot as a barplot
 bins <- 10
-artistData <- head(rev(namesTable[order(namesTable)]), bins)
+artistData <- sort(namesTable, decreasing = TRUE)[1:bins]
 names(artistData) <- gsub(" ", "\n", names(artistData), fixed = TRUE)
 
-png(file = "top10.png", width = 1000, height = 1000, pointsize = 20)
-barplot(artistData, xlab = "plays (past 3 months)", 
+barplot(artistData, xlab = "plays", 
         col = plasma(bins), width = 0.8, las = 2,
         cex.names = 0.8, horiz = T, main = "Top 10 listened to artists")
-dev.off()
 
 # plot time series in polar co ord form 
-png(file = "timings.png", width = 600, height = 600, pointsize = 10)
 plotTimeSeries(data) 
-dev.off()
 
-ggsave(file = "TimeSeries.png", plot = timeSeriesPlot, units = "cm", height = 7, width = 7, dpi = 600) 
-
-attach(data)
 #-------------------------------------------------------------------------------
 # harvest band locations using rvest
-uniqueArtists <- unique(artistName)
+uniqueArtists <- unique(data$artistName)
 
+round2Data <- scrapeLocations(uniqueArtists)
+
+originsLastFM <- round2Data
 #----------------------------------------------------------------
 # load the scrape data
 # load("/home/mstevens/Desktop/BLOG/001-MichaelStevens/WikiNames.Rdata")
