@@ -9,7 +9,7 @@ plotTimeSeries(data, type = "hours")
 \arguments{
 \item{data}{the data produced from the initProcess fct}
 
-\item{type}{specify on wat times scale, currently only hours}
+\item{type}{specify on wait times scale, currently only hours}
 }
 \description{
 Produces a radar chart/histogram detailing hours of the day

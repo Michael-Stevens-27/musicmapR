@@ -39,7 +39,7 @@ initProcess <- function(fileName)
 #' the user listens to music
 #'
 #' @param data the data produced from the initProcess fct 
-#' @param type specify on wat times scale, currently only hours
+#' @param type specify on wait times scale, currently only hours
 #'
 #' @export
 
@@ -84,51 +84,52 @@ plotTimeSeries <- function(data, type = "hours")
 #' last.fm
 #'
 #' @param artistNames a vector of artist names 
+#' @param system_pause the amount of time to pause between site scrapings
+#' @param site_tag see rvest's html_nodels function - a unique identifier that
+#' selects the relevant information from a webpage
 #'
 #' @export
 
-scrapeLocations <- function(artistNames)
+scrapeLocations <- function(artistNames, system_pause = 5, site_tag)
 {
   # replace spaces with plus signs to conform to Last FM format
-  artistNames <- sub("\n", "+", artistNames)
+  artistNames <- gsub(" ", "+", artistNames) 
+
   # time process  
   begin <- Sys.time()
   nArtists <- length(artistNames)
   lastfmURLS <- rep(NA, nArtists)
-  lastfmLoc <- matrix(NA, ncol = 2, nrow = nArtists)
+  lastfmLoc <- rep(NA, nArtists)
   
-  
-  # build a set of urls to scrape from 
+    # build a set of urls to scrape from 
   for(i in 1:nArtists){
-    lastfmURLS[i] <- paste("https://www.last.fm/music/", artistNames[i], sep = "")
+    lastfmURLS[i] <- paste("https://www.last.fm/music/", artistNames[i], "/+wiki", sep = "")
     }
   
   # -----------------------------------
   # now scrape 
   print(paste(nArtists, " URLs generated - now scraping", sep = ""))
-  Sys.sleep(1)
   
   # create progress bar
   pb <- txtProgressBar(min = 0, max = nArtists, style = 3)
   
-  for(i in 1:nArtists)
-    {
+  for(i in 1:nArtists){
     tryCatch({ # stop any failed scrapings from interrupting the loop
     # update progress bar
     setTxtProgressBar(pb, i)
   
     readingSite <- read_html(lastfmURLS[i])               # read the html from site 
-    origin <- html_nodes(readingSite, "dd~ dd")  # extract specific info
+    origin <- html_nodes(readingSite, site_tag)  # extract specific info
 
     # remove any nasty characters from the string
-    lastfmLoc[i, 1:length(origin)] <- str_replace_all(as.character(origin[1:length(origin)]), "[,.\"_<=/>]", "")
+    lastfmLoc[i] <- str_replace_all(as.character(origin[1]), "[,.\"_<=/>]", "")
     }, error=function(e){})
+      Sys.sleep(1)
     }
     close(pb)
     
-    fail <- length(which(is.na(lastfmLoc[,1]) & is.na(lastfmLoc[,2]) == TRUE))
+    fail <- length(which(is.na(lastfmLoc) == TRUE))
     print(paste(fail, " of ", nArtists, " yielded no information", sep = ""))
-    Sys.sleep(1)
 
     end <- Sys.time()
     timeTaken <- end - begin

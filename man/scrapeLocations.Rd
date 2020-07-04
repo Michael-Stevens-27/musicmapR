@@ -4,10 +4,15 @@
 \alias{scrapeLocations}
 \title{Scrape artists country of origin}
 \usage{
-scrapeLocations(artistNames)
+scrapeLocations(artistNames, system_pause = 5, site_tag)
 }
 \arguments{
 \item{artistNames}{a vector of artist names}
+
+\item{system_pause}{the amount of time to pause between site scrapings}
+
+\item{site_tag}{see rvest's html_nodels function - a unique identifier that
+selects the relevant information from a webpage}
 }
 \description{
 scrape the country of origin of each artist using wiki and 
